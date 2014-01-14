@@ -4,13 +4,17 @@ require.config({
         "crel": "../lib/crel"
     }
 });
+//declare editor as global so I can update it later.. if I had time to fully learn require I could probably put my script in here :-/
+var editor,
+    doConvert;
 require(["../src/json.human"], function (JsonHuman) {
     "use strict";
     var textarea = document.getElementById("input"),
         output = document.getElementById("output"),
         raw = document.getElementById("output-raw"),
-        button = document.getElementById("convert"),
-        editor = CodeMirror.fromTextArea(textarea, {
+        button = document.getElementById("convert");
+
+    editor = CodeMirror.fromTextArea(textarea, {
             mode: "application/json",
             json: true
         });
@@ -23,7 +27,7 @@ require(["../src/json.human"], function (JsonHuman) {
         raw.textContent = output.innerHTML;
     }
 
-    function doConvert() {
+    doConvert = function() {
         var json;
         try {
             json = JSON.parse(editor.getValue());

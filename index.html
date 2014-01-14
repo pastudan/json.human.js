@@ -6,64 +6,113 @@
         <link rel="stylesheet" media="all" href="css/demo.css" />
         <link rel="stylesheet" media="all" href="css/json.human.css" />
         <link rel="stylesheet" media="all" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.css" />
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/mode/javascript/javascript.min.js" data-main="js/demo"></script>
+        <script src="lib/require.js" data-main="js/demo"></script>
+
+        <style>
+            input{
+                font-size: 20px;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+            }
+            .topnav{
+                position: fixed;
+                background: linear-gradient(#f9f9f9, #f3f3f3);
+                border-bottom: 1px solid #e5e5e5;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 15px 0;
+                z-index: 20;
+            }
+            .topnav .center{
+                margin: 0 auto;
+                width: 80%;
+            }
+            .topnav .footnote{
+                color: #999;
+                font-size: 10px;
+            }
+            .topnav input[type=text]{
+                width: 600px;
+            }
+            .topnav input[type=button]{
+                background-color: rgb(66, 139, 202);
+                color: #ffffff;
+                border-color: rgb(53, 126, 189);
+            }
+        </style>
     </head>
 
     <body>
-        <h1>json.human.js: Json Formatting for Human Beings</h1>
+        <div class="topnav">
+            <div class="center">
+                <b>URL</b> <input type="text" name="url" id="url" value="http://www.reddit.com/r/javascript/hot.json" />
+                <input id="load_json" type="button" value="Load JSON" />
+                <div class="footnote">(uses Yahoo's <a href="http://stackoverflow.com/questions/8537601/is-there-a-free-json-proxy-server-which-supports-cors-or-jsonp">YQL</a> as a JSON proxy)</div>
+                <script>
+                    $(function(){
+                        //setup click handler
+                        $("#load_json").click(function(){
+                            getJSONFromUrl($("#url"));
+                        });
+                        //fire off default URL on load
+                        getJSONFromUrl($("#url"));
+
+                        //prepare click handlers
+
+                        $(document).click(function(){
+                            alert("DOCUMENT CLICKED")
+                        });
+                        $("tr").click(function(e){
+                            console.log(e);
+                            alert($(this).find("th:first").text());
+                        });
+
+                    });
+                    function getJSONFromUrl(){
+                        var url = $("#url").val();
+                        $.getJSON("http://query.yahooapis.com/v1/public/yql",
+                                {
+                                    q: 'select * from json where url="' + url + '"',
+                                    format: "json"
+                                },
+                                function (data) {
+                                    if (data.query.results) {
+                                        console.log(data);
+                                        var prettyJSON = JSON.stringify(data.query.results.json, null, 4);
+                                        editor.getDoc().setValue(prettyJSON);
+                                        $("#input").text(prettyJSON);
+                                        doConvert();
+                                    } else {
+                                        alert("There was an error with your URL, or Yahoo's YQL has blocked this app.");
+                                    }
+                                }
+                        );
+                    }
+                </script>
+            </div>
+        </div>
+
+        <h1 style="margin-top: 110px">json.human.js: Json Formatting for Human Beings</h1>
 
         <p class="project-description">Provide JSON and get a DOM node with
         a human representation of that JSON.</p>
 
 
-        <h2>Why?</h2>
+        <h2>Wat? Why? How?</h2>
 
-        <p>At <a href="http://event-fabric.com">Event Fabric</a> we need to display JSON to people from all technical levels without being too technical but also without losing information about the underlying JSON object.</p>
-
-        <h2>How?</h2>
-
-        <p>you can see <a href="https://github.com/marianoguerra/json.human.js/blob/master/js/demo.js">js/demo.js</a> in the <a href="http://github.com/marianoguerra/json.human.js">repo</a> for an example, here is a short one</p>
-
-        <pre>
-        var node = JsonHuman.format(input);
-        output.appendChild(node);
-        </pre>
+        <p>See the original <a href="http://marianoguerra.github.io/json.human.js/">json.human.js</a>. This fork just adds the ability to load JSON from a URL, and to click an element from the tree and see it's hierarchy in JavaScript / PHP syntax</p>
 
         <h2>Try it</h2>
-        <p>edit the JSON and click <em>Convert</em></p>
-
-        <h2>Input: JSON</h2>
+        <p>Load some JSON from a URL, edit it if needed, then click <em>Convert</em></p>
 
         <textarea id="input">{
-  "name": "json.human",
-  "description": "Convert\n JSON to human readable\r HTML",
-  "author": "Mariano Guerra <mariano@marianoguerra.org>",
-  "tags": ["DOM", "HTML", "JSON", "Pretty Print"],
-  "version": "0.1.0",
-  "main": "json.human.js",
-  "license" : "MIT",
-  "dependencies": {
-      "crel": "1.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/marianoguerra/json.human.js.git"
-  },
-  "bugs": {
-    "url": "http://github.com/marianoguerra/json.human.js/issues"
-  },
-  "contributors": [],
-  "config": {
-    "what?": "this object is just to show some extra stuff",
-    "how?": ["add json.human.js", "add json.human.css", "???", "profit!"],
-    "customization?": ["customize the css prefix", "change the css file"],
-    "integer": 42,
-    "float": 12.3,
-    "bool": true,
-    "emptyString": "",
-    "emptyArray": [],
-    "emptyObject": {},
-    "htmlEntities": "   <- trailing <em>   & </em> and some html   "
-  }
+    "status": "Loading JSON... Please wait."
 }
         </textarea>
 
@@ -89,9 +138,5 @@
             <li><a href="https://github.com/padolsey/prettyPrint.js">prettyprint.js</a></li>
         </ul>
 
-
-        <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.min.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/mode/javascript/javascript.min.js" data-main="js/demo"></script>
-        <script src="lib/require.js" data-main="js/demo"></script>
     </body>
 </html>
