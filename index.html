@@ -1,142 +1,228 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset='utf-8'>
-        <title>json.human.js - Json Formatting for Human Beings</title>
-        <link rel="stylesheet" media="all" href="css/demo.css" />
-        <link rel="stylesheet" media="all" href="css/json.human.css" />
-        <link rel="stylesheet" media="all" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.css" />
+<head>
+    <meta charset='utf-8'>
+    <title>json.human.js - Json Formatting for Human Beings</title>
+    <link rel="stylesheet" media="all" href="css/demo.css"/>
+    <link rel="stylesheet" media="all" href="css/json.human.css"/>
+    <link rel="stylesheet" media="all" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.css"/>
 
-        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.min.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/mode/javascript/javascript.min.js" data-main="js/demo"></script>
-        <script src="lib/require.js" data-main="js/demo"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.16.0/mode/javascript/javascript.min.js" data-main="js/demo"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/zeroclipboard/1.2.3/ZeroClipboard.min.js"></script>
+    <script src="lib/require.js" data-main="js/demo"></script>
 
-        <style>
-            input{
-                font-size: 20px;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 3px;
-            }
-            .topnav{
-                position: fixed;
-                background: linear-gradient(#f9f9f9, #f3f3f3);
-                border-bottom: 1px solid #e5e5e5;
-                top: 0;
-                left: 0;
-                width: 100%;
-                padding: 15px 0;
-                z-index: 20;
-            }
-            .topnav .center{
-                margin: 0 auto;
-                width: 80%;
-            }
-            .topnav .footnote{
-                color: #999;
-                font-size: 10px;
-            }
-            .topnav input[type=text]{
-                width: 600px;
-            }
-            .topnav input[type=button]{
-                background-color: rgb(66, 139, 202);
-                color: #ffffff;
-                border-color: rgb(53, 126, 189);
-            }
-        </style>
-    </head>
+</head>
 
-    <body>
-        <div class="topnav">
-            <div class="center">
-                <b>URL</b> <input type="text" name="url" id="url" value="http://www.reddit.com/r/javascript/hot.json" />
-                <input id="load_json" type="button" value="Load JSON" />
-                <div class="footnote">(uses Yahoo's <a href="http://stackoverflow.com/questions/8537601/is-there-a-free-json-proxy-server-which-supports-cors-or-jsonp">YQL</a> as a JSON proxy)</div>
-                <script>
-                    $(function(){
-                        //setup click handler
-                        $("#load_json").click(function(){
-                            getJSONFromUrl($("#url"));
-                        });
-                        //fire off default URL on load
-                        getJSONFromUrl($("#url"));
+<body>
+<a href="https://github.com/pastudan/json.human.js"><img style="position: absolute; top: 90px; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+<div class="topnav">
+    <div class="center">
+        <b>URL</b> <input type="text" name="url" id="url" value="http://www.reddit.com/r/javascript.json"/>
+        <input id="load_json" type="button" value="Load JSON"/>
 
-                        //prepare click handlers
-
-                        $(document).click(function(){
-                            alert("DOCUMENT CLICKED")
-                        });
-                        $("tr").click(function(e){
-                            console.log(e);
-                            alert($(this).find("th:first").text());
-                        });
-
-                    });
-                    function getJSONFromUrl(){
-                        var url = $("#url").val();
-                        $.getJSON("http://query.yahooapis.com/v1/public/yql",
-                                {
-                                    q: 'select * from json where url="' + url + '"',
-                                    format: "json"
-                                },
-                                function (data) {
-                                    if (data.query.results) {
-                                        console.log(data);
-                                        var prettyJSON = JSON.stringify(data.query.results.json, null, 4);
-                                        editor.getDoc().setValue(prettyJSON);
-                                        $("#input").text(prettyJSON);
-                                        doConvert();
-                                    } else {
-                                        alert("There was an error with your URL, or Yahoo's YQL has blocked this app.");
-                                    }
-                                }
-                        );
-                    }
-                </script>
-            </div>
+        <div class="footnote">(uses Yahoo's <a
+                href="http://stackoverflow.com/questions/8537601/is-there-a-free-json-proxy-server-which-supports-cors-or-jsonp">YQL</a>
+            as a JSON proxy)
         </div>
+    </div>
+</div>
 
-        <h1 style="margin-top: 110px">json.human.js: Json Formatting for Human Beings</h1>
+<h1 style="margin-top: 110px">json.human.js: Json Formatting for Human Beings</h1>
 
-        <p class="project-description">Provide JSON and get a DOM node with
-        a human representation of that JSON.</p>
+<h2>What? Why? How?</h2>
 
+<div>See the original <a href="http://marianoguerra.github.io/json.human.js/">json.human.js</a>.<br />This fork simply adds the
+    ability to:
+    <ul>
+        <li>load JSON from an external URL</li>
+        <li>click an element from the tree and see it's hierarchy in JavaScript syntax (I can add other languages if it would help)</li>
+        <li>collapse elements in the tree by right clicking</li>
+    </ul>
+    Credit for getting valid dot notation for javascript goes to <a href="http://stackoverflow.com/questions/1661197/valid-characters-for-javascript-variable-names/9337047#9337047">Mathias Bynens</a> for his awesomely short 9594 character string of validation regex.
+</div>
 
-        <h2>Wat? Why? How?</h2>
+<h2>Try it</h2>
 
-        <p>See the original <a href="http://marianoguerra.github.io/json.human.js/">json.human.js</a>. This fork just adds the ability to load JSON from a URL, and to click an element from the tree and see it's hierarchy in JavaScript / PHP syntax</p>
+<p>Load some JSON from a URL, edit it if needed, then click <em>Convert</em></p>
+<div style="color: gray; margin-bottom: 12px; font-size: 10px">Note: This is an old, locally cached, shortened copy of some reddit JSON. <br />Feel free to click the "Load JSON" button at the top to get a fresh copy</div>
 
-        <h2>Try it</h2>
-        <p>Load some JSON from a URL, edit it if needed, then click <em>Convert</em></p>
+<textarea id="input">{
+    "kind": "Listing",
+    "data": {
+        "modhash": "",
+        "children": [
+            {
+                "kind": "t3",
+                "data": {
+                    "domain": "self.javascript",
+                    "banned_by": "null",
+                    "media_embed": null,
+                    "subreddit": "javascript",
+                    "selftext_html": "&lt;!-- SC_OFF --&gt;&lt;div class=\"md\"&gt;&lt;p&gt;To the few users who are reporting spam: thank you.  I appreciate it.  Sometimes it&amp;#39;s not obvious because they&amp;#39;re tech articles and I don&amp;#39;t have time to check user profiles etc...&lt;/p&gt;\n\n&lt;p&gt;To those who haven&amp;#39;t noticed much spam: that&amp;#39;s probably because it&amp;#39;s not &amp;quot;traditional&amp;quot; spam. They&amp;#39;re not links to scam or porn sites - it&amp;#39;s users abusing &lt;a href=\"/r/javascript\"&gt;/r/javascript&lt;/a&gt; and using it as a promotional tool to get traffic to their (usually ad-ridden) blogs.&lt;/p&gt;\n\n&lt;p&gt;If you want to post your own stuff, you need to read the reddiquette and understand reddit&amp;#39;s rules.  You should be an active participant in the reddit community, and you must still mostly post useful and interesting things that are NOT your own content.&lt;/p&gt;\n\n&lt;p&gt;If it&amp;#39;s clear you just created the account so that you could promote your blog/posts on reddit, you may be banned from posting here. This isn&amp;#39;t a free promotional tool for you to drive traffic or increase SEO, and spamming &lt;a href=\"/r/javascript\"&gt;/r/javascript&lt;/a&gt; will not be tolerated.&lt;/p&gt;\n\n&lt;p&gt;I&amp;#39;m not saying you can&amp;#39;t/shouldn&amp;#39;t post your own content. The nature of programming is that you want to share your stuff.  You should clearly say in the title or comments that it&amp;#39;s your own, and you should at least make some effort to participate in other threads in &lt;a href=\"/r/javascript\"&gt;/r/javascript&lt;/a&gt; if you can.&lt;/p&gt;\n\n&lt;p&gt;We mods need your help, readers, in identifying spammers.  Thanks to those already helping out!&lt;/p&gt;\n&lt;/div&gt;&lt;!-- SC_ON --&gt;",
+                    "selftext": "To the few users who are reporting spam: thank you.  I appreciate it.  Sometimes it's not obvious because they're tech articles and I don't have time to check user profiles etc...\n\nTo those who haven't noticed much spam: that's probably because it's not \"traditional\" spam. They're not links to scam or porn sites - it's users abusing /r/javascript and using it as a promotional tool to get traffic to their (usually ad-ridden) blogs.\n\nIf you want to post your own stuff, you need to read the reddiquette and understand reddit's rules.  You should be an active participant in the reddit community, and you must still mostly post useful and interesting things that are NOT your own content.\n\nIf it's clear you just created the account so that you could promote your blog/posts on reddit, you may be banned from posting here. This isn't a free promotional tool for you to drive traffic or increase SEO, and spamming /r/javascript will not be tolerated.\n\nI'm not saying you can't/shouldn't post your own content. The nature of programming is that you want to share your stuff.  You should clearly say in the title or comments that it's your own, and you should at least make some effort to participate in other threads in /r/javascript if you can.\n\nWe mods need your help, readers, in identifying spammers.  Thanks to those already helping out!",
+                    "likes": "null",
+                    "secure_media": "null",
+                    "link_flair_text": "null",
+                    "id": "1qyqvn",
+                    "secure_media_embed": null,
+                    "clicked": "false",
+                    "stickied": "true",
+                    "author": "honestbleeps",
+                    "media": "null",
+                    "score": "28",
+                    "approved_by": "null",
+                    "over_18": "false",
+                    "hidden": "false",
+                    "thumbnail": "",
+                    "subreddit_id": "t5_2qh30",
+                    "edited": "1.385061382E9",
+                    "link_flair_css_class": "null",
+                    "author_flair_css_class": "",
+                    "downs": "26",
+                    "saved": "false",
+                    "is_self": "true",
+                    "permalink": "/r/javascript/comments/1qyqvn/sticky_please_report_spam_here_when_you_see_it/",
+                    "name": "t3_1qyqvn",
+                    "created": "1.384849309E9",
+                    "url": "http://www.reddit.com/r/javascript/comments/1qyqvn/sticky_please_report_spam_here_when_you_see_it/",
+                    "author_flair_text": "Reddit Enhancement Suite",
+                    "title": "[sticky] please report spam here when you see it. afraid you might be spamming? you probably are.",
+                    "created_utc": "1.384849309E9",
+                    "ups": "54",
+                    "num_comments": "41",
+                    "visited": "false",
+                    "num_reports": "null",
+                    "distinguished": "moderator"
+                }
+            },
+            {
+                "kind": "t3",
+                "data": {
+                    "domain": "self.javascript",
+                    "banned_by": "null",
+                    "media_embed": null,
+                    "subreddit": "javascript",
+                    "selftext_html": "&lt;!-- SC_OFF --&gt;&lt;div class=\"md\"&gt;&lt;p&gt;Hi All,&lt;/p&gt;\n\n&lt;p&gt;I&amp;#39;ve been playing with WebCore and emscripten and have been able to compile a webkit.js that lays out and renders in pure JS. The reasons for  this are mostly experimental, to see what a pure JS renderer can do VS. a C++ toll bridge. &lt;/p&gt;\n\n&lt;p&gt;At the moment it uses canvas/webgl and the WebGL ES 2.0 lib to render and runs in a web worker. &lt;/p&gt;\n\n&lt;p&gt;There&amp;#39;s some work to be done:&lt;/p&gt;\n\n&lt;ol&gt;\n&lt;li&gt;&lt;p&gt;Program javascript bindings from WebCore, currently no javascript interaction with the &amp;quot;fake&amp;quot; dom is supported.&lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Reimplement the bindings for WebGL, at the moment it directly renders to the canvas, but WebKit believes its rendering to a back buffer, this isn&amp;#39;t correct and needs to be fixed.&lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Support for hardware acceleration (seriously). Right now there&amp;#39;s one buffer bitblt&amp;#39;d to the canvas, in addition webgl isn&amp;#39;t used for anything other than (oddly enough) webgl in the fake dom.  Moving to an accelerated compositor many canvas objects for each renderlayer would be available and compositing could significantly improve performance.&lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Demos and benchmarks&lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Resource loader, right now it just uses a simple postMessage and blindly goes out to request the resource needed. This has a lot of problems since cross-domain issues exist.  There may be a workaround in the browser. Node.js implementations need to check for cross-domain and adhere to existing security protocol limitations. Infact, nodejs may be able just to bind directly to the network stack and simply reuse the code in webcore.&lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Audio/video/webrtc support.  This isn&amp;#39;t huge but it&amp;#39;d be nice for bindings for both nodejs/browser (if available). &lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Emscripten VS++, GCC, Xcode and other build environments (e.g., gconfig/gyp files?). Much of this can leverage chromiums existing systems. &lt;/p&gt;&lt;/li&gt;\n&lt;li&gt;&lt;p&gt;Removing unnecessary systems / optimizations. Currently there&amp;#39;s a lot of systems that aren&amp;#39;t necessary and have been loosly hacked to wire them up, there&amp;#39;s a lot of zombie code that is running but doesn&amp;#39;t do anything (E.g., managing Cairo interfaces that aren&amp;#39;t actually there).   &lt;/p&gt;&lt;/li&gt;\n&lt;/ol&gt;\n\n&lt;p&gt;If you&amp;#39;re interested in getting together and helping get an initial experimental release up on github (open sourced) PM me.&lt;/p&gt;\n&lt;/div&gt;&lt;!-- SC_ON --&gt;",
+                    "selftext": "Hi All,\n\nI've been playing with WebCore and emscripten and have been able to compile a webkit.js that lays out and renders in pure JS. The reasons for  this are mostly experimental, to see what a pure JS renderer can do VS. a C++ toll bridge. \n\nAt the moment it uses canvas/webgl and the WebGL ES 2.0 lib to render and runs in a web worker. \n\nThere's some work to be done:\n\n1. Program javascript bindings from WebCore, currently no javascript interaction with the \"fake\" dom is supported.\n\n2. Reimplement the bindings for WebGL, at the moment it directly renders to the canvas, but WebKit believes its rendering to a back buffer, this isn't correct and needs to be fixed.\n\n3. Support for hardware acceleration (seriously). Right now there's one buffer bitblt'd to the canvas, in addition webgl isn't used for anything other than (oddly enough) webgl in the fake dom.  Moving to an accelerated compositor many canvas objects for each renderlayer would be available and compositing could significantly improve performance.\n\n4. Demos and benchmarks\n\n5. Resource loader, right now it just uses a simple postMessage and blindly goes out to request the resource needed. This has a lot of problems since cross-domain issues exist.  There may be a workaround in the browser. Node.js implementations need to check for cross-domain and adhere to existing security protocol limitations. Infact, nodejs may be able just to bind directly to the network stack and simply reuse the code in webcore.\n\n6. Audio/video/webrtc support.  This isn't huge but it'd be nice for bindings for both nodejs/browser (if available). \n\n7. Emscripten VS++, GCC, Xcode and other build environments (e.g., gconfig/gyp files?). Much of this can leverage chromiums existing systems. \n\n8. Removing unnecessary systems / optimizations. Currently there's a lot of systems that aren't necessary and have been loosly hacked to wire them up, there's a lot of zombie code that is running but doesn't do anything (E.g., managing Cairo interfaces that aren't actually there).   \n\nIf you're interested in getting together and helping get an initial experimental release up on github (open sourced) PM me.\n\n ",
+                    "likes": "null",
+                    "secure_media": "null",
+                    "link_flair_text": "null",
+                    "id": "1v5aoy",
+                    "secure_media_embed": null,
+                    "clicked": "false",
+                    "stickied": "false",
+                    "author": "ns0",
+                    "media": "null",
+                    "score": "44",
+                    "approved_by": "null",
+                    "over_18": "false",
+                    "hidden": "false",
+                    "thumbnail": "",
+                    "subreddit_id": "t5_2qh30",
+                    "edited": "false",
+                    "link_flair_css_class": "null",
+                    "author_flair_css_class": "null",
+                    "downs": "3",
+                    "saved": "false",
+                    "is_self": "true",
+                    "permalink": "/r/javascript/comments/1v5aoy/anyone_interested_in_a_webkitjs/",
+                    "name": "t3_1v5aoy",
+                    "created": "1.389685152E9",
+                    "url": "http://www.reddit.com/r/javascript/comments/1v5aoy/anyone_interested_in_a_webkitjs/",
+                    "author_flair_text": "null",
+                    "title": "Anyone interested in a webkit.js?",
+                    "created_utc": "1.389656352E9",
+                    "ups": "47",
+                    "num_comments": "6",
+                    "visited": "false",
+                    "num_reports": "null",
+                    "distinguished": "null"
+                }
+            },
+            {
+                "kind": "t3",
+                "data": {
+                    "domain": "blog.siliconpublishing.com",
+                    "banned_by": "null",
+                    "media_embed": null,
+                    "subreddit": "javascript",
+                    "selftext_html": "null",
+                    "selftext": "",
+                    "likes": "null",
+                    "secure_media": "null",
+                    "link_flair_text": "null",
+                    "id": "1v6hnr",
+                    "secure_media_embed": null,
+                    "clicked": "false",
+                    "stickied": "false",
+                    "author": "_etoxin",
+                    "media": "null",
+                    "score": "3",
+                    "approved_by": "null",
+                    "over_18": "false",
+                    "hidden": "false",
+                    "thumbnail": "",
+                    "subreddit_id": "t5_2qh30",
+                    "edited": "false",
+                    "link_flair_css_class": "null",
+                    "author_flair_css_class": "null",
+                    "downs": "0",
+                    "saved": "false",
+                    "is_self": "false",
+                    "permalink": "/r/javascript/comments/1v6hnr/the_famous_controversy_famous_is_a_25yearold/",
+                    "name": "t3_1v6hnr",
+                    "created": "1.389718291E9",
+                    "url": "http://blog.siliconpublishing.com/2013/12/the-famo-us-controversy/",
+                    "author_flair_text": "null",
+                    "title": "The famo.us controversy. famo.us is a 2.5-year-old Silicon Valley startup that claims to have solved the performance challenges of HTML5.",
+                    "created_utc": "1.389689491E9",
+                    "ups": "3",
+                    "num_comments": "0",
+                    "visited": "false",
+                    "num_reports": "null",
+                    "distinguished": "null"
+                }
+            }
+        ],
+        "after": "t3_1v4gbo",
+        "before": "null"
+    }
+}</textarea>
 
-        <textarea id="input">{
-    "status": "Loading JSON... Please wait."
-}
-        </textarea>
+<div class="buttons">
+    <button id="convert">Convert</button>
+</div>
 
-        <div class="buttons">
-            <button id="convert">Convert</button>
-        </div>
+<h2>Output: HTML</h2>
 
-        <h2>Output: HTML</h2>
+<p><em>Hint:</em> Right Click to collapse</p>
 
-        <div id="output">
-        </div>
+<div id="output">
+</div>
 
-        <h2>Raw HTML</h2>
-        <textarea id="output-raw" style="width: 100%; height: 20em;">
-        </textarea>
+<h2>Raw HTML</h2>
+<a href="javascript: $('#output-raw').toggle();">toggle</a>
+<textarea id="output-raw" style="width: 100%; height: 20em; display: none">
+</textarea>
 
-        <h2>License?</h2>
+<h2>License?</h2>
 
-        <p><a href="http://opensource.org/licenses/MIT">MIT</a></p>
+<p><a href="http://opensource.org/licenses/MIT">MIT</a></p>
 
-        <h2>Alternatives</h2>
-        <ul>
-            <li><a href="https://github.com/padolsey/prettyPrint.js">prettyprint.js</a></li>
-        </ul>
+<h2>Alternatives</h2>
+<ul>
+    <li><a href="https://github.com/padolsey/prettyPrint.js">prettyprint.js</a></li>
+</ul>
 
-    </body>
+<div class="footer-hierarchy">
+    Response Variable:
+    <input type="text" id="responseVarName" value="response" />
+    <input type="text" id="hierarchy" placeholder="Click an element from the output to see its JSON hierarchy">
+    <input type="button" id="copy-button" data-clipboard-target="hierarchy" value="Copy">
+    <input type="text" id="value" placeholder="Value">
+</div>
+
+</body>
 </html>

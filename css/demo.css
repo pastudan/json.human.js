@@ -4,7 +4,7 @@ html, body{
 }
 
 body{
-    font-family: sans;
+    font-family: sans-serif;
     color: #222;
     background-color: #fdfdfd;
     width: 80%;
@@ -49,4 +49,89 @@ button:hover, button:focus, button:active{
 
 .CodeMirror{
  border: 1px solid #ddd;
+}
+
+
+
+input {
+    font-size: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.topnav {
+    position: fixed;
+    background: linear-gradient(#f9f9f9, #f3f3f3);
+    border-bottom: 1px solid #e5e5e5;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px 0;
+    z-index: 20;
+}
+
+.topnav .center {
+    margin: 0 auto;
+    width: 80%;
+}
+
+.topnav .footnote {
+    color: #999;
+    font-size: 10px;
+}
+
+.topnav input[type=text] {
+    width: 600px;
+}
+
+input[type=button]{
+    background-color: rgb(66, 139, 202);
+    color: #ffffff;
+    border-color: rgb(53, 126, 189);
+}
+
+#hierarchy{
+    border-radius: 3px 0 0 3px;
+}
+
+#copy-button{
+    border-radius: 0 3px 3px 0;
+    border: 1px solid rgb(53, 126, 189);
+    margin-left: -5px;
+}
+#copy-button.copied{
+    background-color: rgb(235, 235, 235);
+    color: #55565b;
+    border-color: #ccc;
+}
+
+.footer-hierarchy{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(#f9f9f9, #f3f3f3);
+    border-top: 1px solid #e5e5e5;
+    width: 100%;
+    padding: 15px;
+    z-index: 20;
+}
+.footer-hierarchy #responseVarName{
+    width: 150px;
+}
+.footer-hierarchy #hierarchy{
+    width: 600px;
+}
+.footer-hierarchy #value{
+    width: 150px;
+}
+.collapsed:after {
+    content: " ...";
+}
+.collapsed {
+    overflow: hidden;
+    height: 1.5em;
+    opacity: 0.2;
+    display: block;
+    width: 10em;
 }
