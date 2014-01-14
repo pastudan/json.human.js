@@ -141,7 +141,7 @@ function getJSONFromUrl() {
     function (data) {
         if (data.query.results.error == "429") {
             //assume this error is from reddit. Don't copy this error checking into your code if you use a different API!
-            alert("Unfortunately, Reddit's API rate limits the YQL proxy we're using, and it they've exceeded it. Try another URL for your JSON!");
+            alert("Unfortunately, Reddit's API rate limits the YQL proxy we're using, and it looks like they've exceeded it. Try another URL for your JSON!");
         } else if (data.query.results) {
             var prettyJSON = JSON.stringify(data.query.results.json, null, 4);
             editor.getDoc().setValue(prettyJSON);
